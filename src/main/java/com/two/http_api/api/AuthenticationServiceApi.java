@@ -30,7 +30,7 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      * @throws WebClientResponseException if there is a 4xx or 5xx response status.
      */
     @Override
-    public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) {
+    public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) throws WebClientResponseException {
         WebClient webClient = WebClient.create(this.getAuthenticationServiceUrl());
         WebClient.RequestHeadersSpec request = webClient.post()
                 .uri("/credentials")
