@@ -21,15 +21,16 @@ public class UserServiceApi implements UserServiceContract {
 
     @Override
     public User getUser(String email) {
-        WebClient webClient = WebClient.create(this.getUserServiceUrl());
+        WebClient webClient = this.getUserServiceClient();
         WebClient.RequestHeadersSpec request = webClient.get()
                 .uri(builder -> builder.queryParam("email", email).build());
 
         return request.retrieve().bodyToMono(User.class).block(Duration.ofSeconds(15));
     }
 
-    private String getUserServiceUrl() {
-        return client.getNextServerFromEureka("service-users", false).getHomePageUrl();
+    private WebClient getUserServiceClient() {
+        String serviceUrl = client.getNextServerFromEureka("service-users", false).getHomePageUrl();
+        return WebClient.create(serviceUrl);
     }
 
 }

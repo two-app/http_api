@@ -31,7 +31,7 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      */
     @Override
     public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) throws WebClientResponseException {
-        WebClient webClient = WebClient.create(this.getAuthenticationServiceUrl());
+        WebClient webClient = this.getAuthenticationServiceClient();
         WebClient.RequestHeadersSpec request = webClient.post()
                 .uri("/credentials")
                 .body(BodyInserters.fromObject(credentials));
@@ -39,7 +39,8 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
         return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
     }
 
-    private String getAuthenticationServiceUrl() {
-        return client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
+    private WebClient getAuthenticationServiceClient() {
+        String serviceUrl = client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
+        return WebClient.create(serviceUrl);
     }
 }
