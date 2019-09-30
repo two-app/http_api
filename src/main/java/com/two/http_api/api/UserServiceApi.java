@@ -4,9 +4,10 @@ import com.netflix.discovery.EurekaClient;
 import com.two.http_api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
 
 @Service
 public class UserServiceApi implements UserServiceContract {
@@ -19,8 +20,12 @@ public class UserServiceApi implements UserServiceContract {
     }
 
     @Override
-    public ResponseEntity<User> getUser(String email) {
-        return new RestTemplate().getForEntity(getUserServiceUrl() + "user?email=" + email, User.class);
+    public User getUser(String email) {
+        WebClient webClient = WebClient.create(this.getUserServiceUrl());
+        WebClient.RequestHeadersSpec request = webClient.get()
+                .uri(builder -> builder.queryParam("email", email).build());
+
+        return request.retrieve().bodyToMono(User.class).block(Duration.ofSeconds(15));
     }
 
     private String getUserServiceUrl() {
