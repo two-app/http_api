@@ -1,8 +1,10 @@
 package com.two.http_api.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Value
+@AllArgsConstructor
+@Getter
 public class Tokens {
     private final String refreshToken;
     private final String accessToken;
