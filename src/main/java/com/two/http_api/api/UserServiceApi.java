@@ -1,19 +1,36 @@
 package com.two.http_api.api;
 
+import com.netflix.discovery.EurekaClient;
 import com.two.http_api.model.User;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
-public class UserServiceApi {
+import java.time.Duration;
 
-    private final String userServiceUrl = "http://localhost:8084";
+@Service
+public class UserServiceApi implements UserServiceContract {
 
-    public ResponseEntity<User> getUser(int uid) {
-        return new RestTemplate().getForEntity(userServiceUrl + "?uid=" + uid, User.class);
+    private final EurekaClient client;
+
+    @Autowired
+    public UserServiceApi(@Qualifier("eurekaClient") EurekaClient client) {
+        this.client = client;
     }
 
-    public ResponseEntity<User> getUser(String email) {
-        return new RestTemplate().getForEntity(userServiceUrl + "?email=" + email, User.class);
+    @Override
+    public User getUser(String email) {
+        WebClient webClient = this.getUserServiceClient();
+        WebClient.RequestHeadersSpec request = webClient.get()
+                .uri(builder -> builder.queryParam("email", email).build());
+
+        return request.retrieve().bodyToMono(User.class).block(Duration.ofSeconds(15));
+    }
+
+    private WebClient getUserServiceClient() {
+        String serviceUrl = client.getNextServerFromEureka("service-users", false).getHomePageUrl();
+        return WebClient.create(serviceUrl);
     }
 
 }
