@@ -5,9 +5,12 @@ import com.two.http_api.model.Tokens;
 import com.two.http_api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.time.Duration;
 
 @Service
 public class AuthenticationServiceApi implements AuthenticationServiceContract {
@@ -19,9 +22,21 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
         this.client = client;
     }
 
+    /**
+     * Performs a POST to the authentication service. The response is directly mapped to tokens.
+     *
+     * @param credentials to store in the authentication service.
+     * @return either an access/refresh or connect/refresh pair of tokens.
+     * @throws WebClientResponseException fi there is a 4xx or 5xx response status.
+     */
     @Override
-    public ResponseEntity<Tokens> storeCredentialsAndGenerateTokens(User.Credentials credentials) {
-        return new RestTemplate().postForEntity(getUserServiceUrl() + "credentials", credentials, Tokens.class);
+    public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) throws WebClientResponseException {
+        WebClient webClient = WebClient.create(this.getUserServiceUrl());
+        WebClient.RequestHeadersSpec request = webClient.post()
+                .uri("/credentials")
+                .body(BodyInserters.fromObject(credentials));
+
+        return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
     }
 
     private String getUserServiceUrl() {
