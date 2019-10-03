@@ -5,20 +5,25 @@ import com.two.http_api.model.Tokens;
 import com.two.http_api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.net.URI;
 import java.time.Duration;
 
 @Service
 public class AuthenticationServiceApi implements AuthenticationServiceContract {
 
+    private final WebClient webClient;
     private final EurekaClient client;
 
     @Autowired
-    public AuthenticationServiceApi(@Qualifier("eurekaClient") EurekaClient client) {
+    @Lazy
+    public AuthenticationServiceApi(@Qualifier("eurekaClient") EurekaClient client, WebClient webClient) {
+        this.webClient = webClient;
         this.client = client;
     }
 
@@ -31,16 +36,14 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      */
     @Override
     public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) throws WebClientResponseException {
-        WebClient webClient = this.getAuthenticationServiceClient();
+        String host = client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
+        String path = host + "credentials";
+
         WebClient.RequestHeadersSpec request = webClient.post()
-                .uri("/credentials")
+                .uri(path)
                 .body(BodyInserters.fromObject(credentials));
 
         return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
     }
 
-    private WebClient getAuthenticationServiceClient() {
-        String serviceUrl = client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
-        return WebClient.create(serviceUrl);
-    }
 }
