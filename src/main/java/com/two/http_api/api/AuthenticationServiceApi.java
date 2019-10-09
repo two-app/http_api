@@ -11,7 +11,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.net.URI;
 import java.time.Duration;
 
 @Service
@@ -35,15 +34,36 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      * @throws WebClientResponseException if there is a 4xx or 5xx response status.
      */
     @Override
-    public Tokens storeCredentialsAndGenerateTokens(User.Credentials credentials) throws WebClientResponseException {
-        String host = client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
-        String path = host + "credentials";
+    public Tokens storeCredentialsAndGenerateTokens(User.WithCredentials credentials) throws WebClientResponseException {
+        String path = getAuthenticationServiceHost() + "credentials";
 
         WebClient.RequestHeadersSpec request = webClient.post()
                 .uri(path)
                 .body(BodyInserters.fromObject(credentials));
 
         return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
+    }
+
+    /**
+     * Performs a POST to the authentication service. The response is directly mapped to tokens.
+     *
+     * @param credentials to store in the authentication service.
+     * @return either an access/refresh or connect/refresh pair of tokens.
+     * @throws WebClientResponseException if there is a 4xx or 5xx response status.
+     */
+    @Override
+    public Tokens authenticateCredentialsAndGenerateTokens(User.WithCredentials credentials) {
+        String path = getAuthenticationServiceHost() + "authenticate";
+
+        WebClient.RequestHeadersSpec request = webClient.post()
+                .uri(path)
+                .body(BodyInserters.fromObject(credentials));
+
+        return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
+    }
+
+    private String getAuthenticationServiceHost() {
+        return client.getNextServerFromEureka("service-authentication", false).getHomePageUrl();
     }
 
 }

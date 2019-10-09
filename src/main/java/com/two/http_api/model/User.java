@@ -1,33 +1,43 @@
 package com.two.http_api.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
-@Value
+@Data
+@AllArgsConstructor
 public class User {
 
-    private final int uid;
+    @Min(value = 1, message = "Invalid UID.")
+    private int uid;
+
     private Integer pid;
+
     private Integer cid;
 
-    private final String email;
-    private final int age;
-    private final String name;
+    @Email(message = "You must provide a valid email.")
+    private String email;
 
-    /**
-     * Used for the initial register of a user in the authentication service.
-     */
-    @Value
-    public static class Credentials {
-        @Min(value = 1, message = "UID must be greater than one.")
-        private final int uid;
+    @Min(value = 13, message = "You must be at least 13.")
+    @Max(value = 99, message = "You can't be over 99.")
+    private int age;
+
+    @NotEmpty(message = "You must provide a name.")
+    private String name;
+
+    @Data
+    @AllArgsConstructor
+    public static class WithCredentials {
+        @NotNull
+        @Valid
+        private User user;
 
         @NotEmpty(message = "You must provide a password.")
-        @Length(min = 3, message = "Your password is too short.")
-        private final String rawPassword;
+        @Length(min = 3, message = "You must provide a valid password.")
+        private String password;
     }
 
 }
