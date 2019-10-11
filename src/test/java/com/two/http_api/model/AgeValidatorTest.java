@@ -24,11 +24,7 @@ class AgeValidatorTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, -12);
 
-        User user = new User(
-                2,
-                3,
-                4,
-                "gerry@two.com",
+        User user = new User(2, 3, 4, "gerry@two.com",
                 LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate(),
                 "Gerry"
         );
@@ -43,11 +39,7 @@ class AgeValidatorTest {
     @Test
     @DisplayName("it should pass if the user is older than 13")
     void validAge() {
-        User user = new User(
-                2,
-                3,
-                4,
-                "gerry@two.com",
+        User user = new User(2, 3, 4, "gerry@two.com",
                 LocalDate.parse("1997-08-21"),
                 "Gerry"
         );
