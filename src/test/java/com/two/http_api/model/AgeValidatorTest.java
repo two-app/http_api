@@ -20,7 +20,6 @@ class AgeValidatorTest {
     @Test
     @DisplayName("it should fail if the age is under 13")
     void under13() {
-
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, -12);
 
