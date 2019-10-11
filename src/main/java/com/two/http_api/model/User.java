@@ -3,9 +3,14 @@ package com.two.http_api.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -21,9 +26,9 @@ public class User {
     @Email(message = "You must provide a valid email.")
     private String email;
 
-    @Min(value = 13, message = "You must be at least 13.")
-    @Max(value = 99, message = "You can't be over 99.")
-    private int age;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Age(13)
+    private LocalDate dob;
 
     @NotEmpty(message = "You must provide a name.")
     private String name;

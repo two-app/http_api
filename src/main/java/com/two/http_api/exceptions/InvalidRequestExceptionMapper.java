@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -51,6 +52,13 @@ public class InvalidRequestExceptionMapper {
     public ExceptionResponse error(HttpMessageNotReadableException e) throws ResponseStatusException {
         logger.warn("[400] Badly formed HTTP request received.", e);
         return new ExceptionResponse("Badly formed HTTP request.", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse error(MissingRequestHeaderException e) {
+        logger.warn("[400] Converting Missing Request Header Exception into 400 BAD REQUEST.", e);
+        return new ExceptionResponse("Missing header " + e.getHeaderName() + ".", HttpStatus.BAD_REQUEST);
     }
 
 }
