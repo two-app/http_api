@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import javax.validation.Valid;
 import java.time.Duration;
 
 @Service
@@ -58,6 +59,17 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
         WebClient.RequestHeadersSpec request = webClient.post()
                 .uri(path)
                 .body(BodyInserters.fromObject(credentials));
+
+        return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
+    }
+
+    @Override
+    public Tokens getToken(@Valid User user) {
+        String path = getAuthenticationServiceHost() + "tokens";
+
+        WebClient.RequestHeadersSpec request = webClient.post()
+                .uri(path)
+                .body(BodyInserters.fromObject(user));
 
         return request.retrieve().bodyToMono(Tokens.class).block(Duration.ofSeconds(15));
     }

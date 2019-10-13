@@ -2,6 +2,7 @@ package com.two.http_api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.Wither;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
+@Wither
 public class User {
 
     @Min(value = 1, message = "Invalid UID.")
