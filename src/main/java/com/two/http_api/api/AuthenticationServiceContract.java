@@ -9,13 +9,15 @@ import javax.validation.Valid;
 public interface AuthenticationServiceContract {
 
     Tokens storeCredentialsAndGenerateTokens(
-            @RequestBody @Valid
-                    User.WithCredentials credentials
+            @RequestBody @Valid User.WithCredentials credentials
     );
 
     Tokens authenticateCredentialsAndGenerateTokens(
-            @RequestBody @Valid
-                    User.WithCredentials credentials
+            @RequestBody @Valid User.WithCredentials credentials
+    );
+
+    Tokens getToken(
+            @RequestBody @Valid User user
     );
 
 }
