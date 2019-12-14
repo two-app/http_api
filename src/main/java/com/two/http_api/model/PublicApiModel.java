@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 
 public class PublicApiModel {
 
@@ -43,9 +43,21 @@ public class PublicApiModel {
         @Length(min = 5, message = "Name must be at least 5 characters long.")
         private String name;
 
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        @Age(13)
-        private LocalDate dob;
+        @NotEmpty(message = "First Name must be provided.")
+        @Length(min = 2, message = "First Name must be at least 2 characters long.")
+        private String firstName;
+
+        @NotEmpty(message = "Last Name must be provided.")
+        @Length(min = 2, message = "Last Name must be at least 2 characters long.")
+        private String lastName;
+
+        @NotNull
+        @AssertTrue
+        private boolean acceptedTerms;
+
+        @NotNull
+        @AssertTrue
+        private boolean ofAge;
     }
 
 
