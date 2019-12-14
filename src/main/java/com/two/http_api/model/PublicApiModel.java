@@ -39,10 +39,6 @@ public class PublicApiModel {
         @Length(min = 5, message = "Password must be at least 5 characters long.")
         private String password;
 
-        @NotEmpty(message = "Name must be provided.")
-        @Length(min = 5, message = "Name must be at least 5 characters long.")
-        private String name;
-
         @NotEmpty(message = "First Name must be provided.")
         @Length(min = 2, message = "First Name must be at least 2 characters long.")
         private String firstName;
