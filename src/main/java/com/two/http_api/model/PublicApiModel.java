@@ -51,12 +51,12 @@ public class PublicApiModel {
         @Length(min = 2, message = "Last Name must be at least 2 characters long.")
         private String lastName;
 
-        @NotNull
-        @AssertTrue
+        @NotNull(message = "Terms & Conditions must be accepted.")
+        @AssertTrue(message = "Terms & Conditions must be accepted.")
         private boolean acceptedTerms;
 
-        @NotNull
-        @AssertTrue
+        @NotNull(message = "You must be over 16 to join.")
+        @AssertTrue(message = "You must be over 16 to join.")
         private boolean ofAge;
     }
 
