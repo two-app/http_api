@@ -1,6 +1,9 @@
 package com.two.http_api.api;
 
+import com.two.http_api.model.Partner;
 import com.two.http_api.model.Tokens;
+import com.two.http_api.model.User;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +36,13 @@ public class PublicApiContracts {
 
         @PostMapping(postSelfPath)
         Tokens registerUser(@RequestBody @Valid UserRegistration user);
+    }
+
+    public interface GetPartner {
+        String getPartnerPath = "/partner";
+
+        @GetMapping(getPartnerPath)
+        Partner getPartner(HttpServletRequest request);
     }
 
 }
