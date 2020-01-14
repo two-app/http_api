@@ -1,5 +1,6 @@
 package com.two.http_api.api;
 
+import com.two.http_api.model.Partner;
 import com.two.http_api.model.Tokens;
 import com.two.http_api.model.User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +42,7 @@ public class PublicApiContracts {
         String getPartnerPath = "/partner";
 
         @GetMapping(getPartnerPath)
-        User getPartner(HttpServletRequest request);
+        Partner getPartner(HttpServletRequest request);
     }
 
 }

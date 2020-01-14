@@ -3,6 +3,7 @@ package com.two.http_api.api;
 import com.netflix.discovery.EurekaClient;
 import com.two.http_api.model.Tokens;
 import com.two.http_api.model.User;
+import com.two.http_api.model.UserWithCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -35,7 +36,7 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      * @throws WebClientResponseException if there is a 4xx or 5xx response status.
      */
     @Override
-    public Tokens storeCredentialsAndGenerateTokens(User.WithCredentials credentials) throws WebClientResponseException {
+    public Tokens storeCredentialsAndGenerateTokens(UserWithCredentials credentials) throws WebClientResponseException {
         String path = getAuthenticationServiceHost() + "credentials";
 
         WebClient.RequestHeadersSpec request = webClient.post()
@@ -53,7 +54,7 @@ public class AuthenticationServiceApi implements AuthenticationServiceContract {
      * @throws WebClientResponseException if there is a 4xx or 5xx response status.
      */
     @Override
-    public Tokens authenticateCredentialsAndGenerateTokens(User.WithCredentials credentials) {
+    public Tokens authenticateCredentialsAndGenerateTokens(UserWithCredentials credentials) {
         String path = getAuthenticationServiceHost() + "authenticate";
 
         WebClient.RequestHeadersSpec request = webClient.post()
